@@ -1,5 +1,7 @@
 {
   "name": "trunk",
-  "integrations": {},
+  "integrations": {
+    "cordova": {}
+  },
   "type": "ionic-angular"
 }
