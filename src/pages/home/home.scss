@@ -1,0 +1,26 @@
+page-home {
+    img {
+        margin: 60px 0 20px;
+    }
+    .welcomeBtn {
+        margin-top: 20%;
+    }
+    p {
+        font-size: 21px;
+        font-weight: 200;
+    }
+    ion-footer {
+        .toolbar {
+            padding: 10px 10px 20px !important;
+            .toolbar-background {
+                background: transparent;
+            }
+        }
+    }
+    .footer::before {
+        background-image: none;
+    }
+    .toolbar-background {
+        border-color: transparent !important;
+    }
+}
