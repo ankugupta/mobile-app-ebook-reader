@@ -1,0 +1,12 @@
+<ion-header>
+  <ion-navbar color="secondary">
+      <ion-title>Scan QR Code</ion-title>
+  </ion-navbar>
+</ion-header>
+<ion-content padding [ngClass]="{ 'hideContent':scanning, 'showContent': !scanning}">
+  <ion-card>
+      <ion-card-content>
+          <button (click)="scanForQRCode()" ion-button type="button" [disabled]="!cameraPermission" class="btn" block>Scan QR on book</button>
+      </ion-card-content>
+  </ion-card>
+</ion-content>

@@ -1,0 +1,25 @@
+{
+    "resources": [
+        {
+            "bookId": "book1",
+            "bookUrl": "http://printmirchi.com/e-book/",
+            "imageUrl": "https://s3.ap-south-1.amazonaws.com/book-animator/prod/publishers/Harish/books/Harish_Sr_Kg_Rhyme/Harish_Sr_Kg_Rhyme_P1_Thumb.jpg",
+            "qrCode": "12345",
+            "title": "my test book"
+        },
+        {
+            "bookId": "book2",
+            "bookUrl": "http://printmirchi.com/e-book/",
+            "imageUrl": "https://s3.ap-south-1.amazonaws.com/book-animator/prod/publishers/Harish/books/Harish_Sr_Kg_Rhyme/Harish_Sr_Kg_Rhyme_P1_Thumb.jpg",
+            "qrCode": "12346",
+            "title": "my best book"
+        },
+        {
+            "bookId": "book3",
+            "bookUrl": "http://printmirchi.com/e-book/",
+            "imageUrl": "https://s3.ap-south-1.amazonaws.com/book-animator/prod/publishers/Harish/books/Harish_Sr_Kg_Rhyme/Harish_Sr_Kg_Rhyme_P1_Thumb.jpg",
+            "qrCode": "12347",
+            "title": "my west book"
+        }
+    ]
+}
