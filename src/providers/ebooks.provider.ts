@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
+import { InAppBrowser } from '@ionic-native/in-app-browser';
 import { Observable } from 'rxjs';
 
-import { EBOOKS_URI } from '../app/app.constants';
 import { EBook } from '../model/ebook';
 import { Result } from '../model/result';
 import { DataProvider } from './data.provider';
@@ -16,7 +16,9 @@ export class EBooksProvider {
   private qrCodeToBookMap: Map<string, EBook>;
   private books: EBook[];
 
-  constructor(private data: DataProvider) {
+  constructor(
+    private iab: InAppBrowser,
+    private data: DataProvider) {
   }
 
   public getAll(): Observable<EBook[]> {
@@ -44,13 +46,13 @@ export class EBooksProvider {
   }
 
   public getBookIdToBookMap(): Observable<Map<string, EBook>> {
-    if(this.bookIdToBookMap){
+    if (this.bookIdToBookMap) {
       console.log('returning cached map');
       return Observable.of(this.bookIdToBookMap);
     }
-    else{
+    else {
       return this.getAll().map(
-        () =>{
+        () => {
           return this.bookIdToBookMap;
         }
       )
@@ -58,16 +60,40 @@ export class EBooksProvider {
   }
 
   public getQRCodeToBookMap(): Observable<Map<string, EBook>> {
-    if(this.qrCodeToBookMap){
+    if (this.qrCodeToBookMap) {
       console.log('returning cached map');
       return Observable.of(this.qrCodeToBookMap);
     }
-    else{
+    else {
       return this.getAll().map(
-        () =>{
+        () => {
           return this.qrCodeToBookMap;
         }
       )
     }
+  }
+
+
+  //opens media with given url in in-app-browser
+  public openMedia(mediaUrl: string) {
+
+    // hardwareback option enables back button to be used for navigating back in browser history
+    this.iab.create(mediaUrl, "_blank", "location=yes,hardwareback=no");
+
+    // below code may be used in future
+
+    // iab.on("loadstop").subscribe(
+    //   () => {
+    //    console.log("loadstop fired!");
+    //    iab.show();
+    //   }
+    // )
+    // iab.on("exit").subscribe(
+    //   () => {
+    //   this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.PORTRAIT);
+    //   console.log("orientation after browser close: " + this.screenOrientation.type);
+    //   }
+    // )
+
   }
 }

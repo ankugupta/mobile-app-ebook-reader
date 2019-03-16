@@ -51,6 +51,7 @@ export class HomePage {
 
   presentOfflineAlert() {
     let alert = this.alertCtrl.create({
+      enableBackdropDismiss: false,
       title: "Device Offline",
       subTitle: "A connection to internet is required to use this app. Please connect to a Wi-Fi or cellular network.",
       buttons: [
@@ -69,6 +70,7 @@ export class HomePage {
     }
     else {
       let alert = this.alertCtrl.create({
+        enableBackdropDismiss: false,
         title: title,
         message: message,
         buttons: [

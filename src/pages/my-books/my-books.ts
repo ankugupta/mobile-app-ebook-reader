@@ -1,13 +1,11 @@
 import { Component } from '@angular/core';
-import { InAppBrowser } from '@ionic-native/in-app-browser';
-import { ScreenOrientation } from '@ionic-native/screen-orientation';
 import { AlertController, IonicPage, LoadingController, NavController, Platform } from 'ionic-angular';
 
-import { SCAN_BOOK_PAGE } from '../pages.constants';
 import { EBook } from '../../model/ebook';
 import { DeviceProvider } from '../../providers/device.provider';
 import { EBooksProvider } from '../../providers/ebooks.provider';
 import { SqlStorageProvider } from '../../providers/sql-storage.provider';
+import { SCAN_BOOK_PAGE } from '../pages.constants';
 
 @IonicPage()
 @Component({
@@ -18,20 +16,20 @@ export class MyBooksPage {
 
   myEBooks: EBook[] = [];
   searchedBooks: EBook[] = [];
+  noBooksMessage: boolean;
 
   constructor(
     private platform: Platform,
     private alertCtrl: AlertController,
     private loadingCtrl: LoadingController,
     private nav: NavController,
-    private screenOrientation: ScreenOrientation,
-    private iab: InAppBrowser,
     private deviceProvider: DeviceProvider,
     private ebooksProvider: EBooksProvider,
     private sqldb: SqlStorageProvider) {
   }
 
   ionViewWillEnter() {
+    this.noBooksMessage = false;
     this.loadBooks();
   }
 
@@ -44,7 +42,8 @@ export class MyBooksPage {
       savedBooks => {
         this.ebooksProvider.getBookIdToBookMap().subscribe(
           bookIdToBookMap => {
-
+            this.myEBooks = [];
+            this.searchedBooks = [];
             // calculate books to display
             savedBooks.forEach(savedBook => {
               if (bookIdToBookMap.has(savedBook.bookId)) {
@@ -53,6 +52,11 @@ export class MyBooksPage {
                 this.searchedBooks.push(book);
               }
             });
+
+            if (this.myEBooks.length == 0) {
+              this.noBooksMessage = true;
+            }
+
             loader.dismiss();
           },
           error => {
@@ -62,13 +66,14 @@ export class MyBooksPage {
           }
         )
       },
-      error => {
+      () => {
         loader.dismiss();
         this.presentFailureAlert("Technical Error", "Please try again later");
       }
     );
   }
 
+  // called from UI
   public filterBooksByTitle(ev: any) {
     const val = ev.target.value;
     if (val && val.trim() !== '') {
@@ -81,32 +86,19 @@ export class MyBooksPage {
     }
   }
 
-  //opens media with given url in in-app-browser
-  public openMedia(mediaUrl: string) {
-
-    let iab = this.iab.create(mediaUrl, "_blank", "location=yes");
-
-    iab.on("loadstop").subscribe(
-      () => {
-        // console.log("loadstop fired!");
-        // iab.show();
-      }
-    )
-    iab.on("exit").subscribe(
-      () => {
-        //this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.PORTRAIT);
-        //console.log("orientation after browser close: " + this.screenOrientation.type);
-      }
-    )
-
+  // called from UI
+  public openMedia(bookUrl: string) {
+    this.ebooksProvider.openMedia(bookUrl);
   }
 
+  // called from UI
   goToQRScanPage() {
     this.nav.push(SCAN_BOOK_PAGE);
   }
 
   presentOfflineAlert() {
     let alert = this.alertCtrl.create({
+      enableBackdropDismiss: false,
       title: "Device Offline",
       subTitle: "A connection to internet is required to use this section. Please connect to a Wi-Fi or cellular network.",
       buttons: [
@@ -125,6 +117,7 @@ export class MyBooksPage {
     }
     else {
       let alert = this.alertCtrl.create({
+        enableBackdropDismiss: false,
         title: title,
         message: message,
         buttons: [

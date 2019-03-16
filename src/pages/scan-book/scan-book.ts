@@ -1,8 +1,6 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
-import { InAppBrowser } from '@ionic-native/in-app-browser';
+import { ChangeDetectorRef, Component } from '@angular/core';
 import { QRScanner, QRScannerStatus } from '@ionic-native/qr-scanner';
-import { ScreenOrientation } from '@ionic-native/screen-orientation';
-import { IonicPage, NavController, NavParams, Platform, AlertController, LoadingController } from 'ionic-angular';
+import { AlertController, IonicPage, LoadingController, NavController, NavParams, Platform } from 'ionic-angular';
 import { Subscription } from 'rxjs/Subscription';
 
 import { EBook } from '../../model/ebook';
@@ -25,8 +23,6 @@ export class ScanBookPage {
   public qrCodeToBookMap: Map<string, EBook>;
 
   constructor(
-    private screenOrientation: ScreenOrientation,
-    private iab: InAppBrowser,
     public navCtrl: NavController,
     public navParams: NavParams,
     public platform: Platform,
@@ -36,7 +32,7 @@ export class ScanBookPage {
     private loadingCtrl: LoadingController,
     private deviceProvider: DeviceProvider,
     private ebooksProvider: EBooksProvider,
-    private sqldb: SqlStorageProvider ) {
+    private sqldb: SqlStorageProvider) {
 
   }
 
@@ -54,14 +50,15 @@ export class ScanBookPage {
         data => {
           this.qrCodeToBookMap = data;
           if (this.platform.is('cordova')) {
-            this.qrScanner.getStatus().then((status: QRScannerStatus) => {
-              if (!status.prepared) {
-                this.prepareQRScanner();
-              } else {
-                console.log("qr scanner already prepared: ", status);
-                this.cameraPermission = true;
-              }
-            })
+            this.prepareQRScanner();
+            // this.qrScanner.getStatus().then((status: QRScannerStatus) => {
+            //   if (!status.prepared) {
+            //     this.prepareQRScanner();
+            //   } else {
+            //     console.log("qr scanner already prepared: ", status);
+            //     this.cameraPermission = true;
+            //   }
+            // })
           }
           loader.dismiss();
         },
@@ -72,14 +69,6 @@ export class ScanBookPage {
         }
       )
     }
-
-
-    //TODO
-    // this.platform.registerBackButtonAction(() => {
-    //   console.log("back pressed in home");
-    //   this.cleanUpScanner();
-    // });
-
   }
 
   private cleanUpScanner() {
@@ -119,6 +108,8 @@ export class ScanBookPage {
           console.log('Permission granted');
           this.cameraPermission = true;
 
+          // trigger scan
+          this.scanForQRCode();
         } else if (status.denied && status.canOpenSettings) {
           // camera permission was permanently denied
           // you must use QRScanner.openSettings() method to guide the user to the settings page
@@ -181,38 +172,20 @@ export class ScanBookPage {
   }
 
 
-public saveBookAndOpenMedia(book: EBook){
+  public saveBookAndOpenMedia(book: EBook) {
 
-  this.sqldb.insertBook({bookId: book.bookId}).then(
-    () => {
-      console.log('book record saved successfully');
-    },
-    error => {
-      console.error('ERROR: while saving book: ', error);
-    }
-  )
-
-  this.openMedia(book.bookUrl);
-}
-
-  //opens media with given url in in-app-browser
-  public openMedia(mediaUrl: string) {
-
-    let iab = this.iab.create(mediaUrl, "_blank", "location=yes");
-
-    iab.on("loadstop").subscribe(
+    this.sqldb.insertBook({ bookId: book.bookId }).then(
       () => {
-        // console.log("loadstop fired!");
-        // iab.show();
-      }
-    )
-    iab.on("exit").subscribe(
-      () => {
-        //this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.PORTRAIT);
-        //console.log("orientation after browser close: " + this.screenOrientation.type);
+        console.log('book record saved successfully');
+      },
+      error => {
+        console.error('ERROR: while saving book: ', error);
       }
     )
 
+    this.ebooksProvider.openMedia(book.bookUrl);
+
+    this.navCtrl.pop();
   }
 
 
@@ -223,6 +196,7 @@ public saveBookAndOpenMedia(book: EBook){
 
   presentOfflineAlert() {
     let alert = this.alertCtrl.create({
+      enableBackdropDismiss: false,
       title: "Device Offline",
       subTitle: "A connection to internet is required to use this section. Please connect to a Wi-Fi or cellular network.",
       buttons: [
@@ -241,6 +215,7 @@ public saveBookAndOpenMedia(book: EBook){
     }
     else {
       let alert = this.alertCtrl.create({
+        enableBackdropDismiss: false,
         title: title,
         message: message,
         buttons: [
@@ -262,12 +237,16 @@ public saveBookAndOpenMedia(book: EBook){
   presentInfoAlert(title: string, message: string) {
 
     let alert = this.alertCtrl.create({
+      enableBackdropDismiss: false,
       title: title,
       message: message,
       buttons: [
         {
           text: "OK",
-          role: "cancel"
+          role: "cancel",
+          handler: () => {
+            this.navCtrl.pop();
+          }
         }
       ]
     });
