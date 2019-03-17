@@ -1,9 +1,9 @@
 import { Component } from '@angular/core';
-import { NavController, AlertController, Platform } from 'ionic-angular';
-import { MYBOOKS_PAGE, SCAN_BOOK_PAGE } from '../pages.constants';
-import { EBooksProvider } from '../../providers/ebooks.provider';
+import { AlertController, NavController, Platform } from 'ionic-angular';
+
 import { DeviceProvider } from '../../providers/device.provider';
-import { EBook } from '../../model/ebook';
+import { EBooksProvider } from '../../providers/ebooks.provider';
+import { MYBOOKS_PAGE, SCAN_BOOK_PAGE } from '../pages.constants';
 
 @Component({
   selector: 'page-home',
@@ -45,7 +45,7 @@ export class HomePage {
     this.nav.push(MYBOOKS_PAGE);
   }
 
-  goToQRScanPage(){
+  goToQRScanPage() {
     this.nav.push(SCAN_BOOK_PAGE);
   }
 

@@ -126,8 +126,32 @@ export class ScanBookPage {
         }
       })
       .catch((e: any) => {
-        console.log('Error is', e)
-        this.presentFailureAlert("Technical Error", "Please try again later");
+        console.log('Error is', e);
+
+        if (e.name === 'CAMERA_ACCESS_DENIED') {
+          this.qrScanner.getStatus().then(
+            (status: QRScannerStatus) => {
+              console.log('status on error: ', status);
+              // user permanently denied access
+              if (status.denied) {
+                if (confirm("Would you like to enable QR code scanning? You can allow camera access in your settings.")) {
+                  this.qrScanner.openSettings();
+                }
+                else {
+                  this.presentInfoAlert("Permission Required", "Camera access is required to scan QR codes. Please try again and grant access when prompted.");
+                }
+              }
+              else {
+                this.presentInfoAlert("Permission Required", "Camera access is required to scan QR codes. Please try again and grant access when prompted.");
+              }
+            },
+            () => {
+              this.presentFailureAlert("Technical Error", "Please try again later");
+            });
+        }
+        else {
+          this.presentFailureAlert("Technical Error", "Please try again later");
+        }
       });
   }
 
@@ -144,9 +168,6 @@ export class ScanBookPage {
         ((<any>window).document.querySelector('ion-app') as HTMLElement).classList.remove('cameraView');
 
         this.scanSub.unsubscribe(); // stop scanning
-        this.qrScanner.getStatus().then((status: QRScannerStatus) => {
-          console.log("after detection: ", status);
-        });
 
         this.changeDetector.detectChanges();
 
@@ -164,33 +185,52 @@ export class ScanBookPage {
 
     ((<any>window).document.querySelector('ion-app') as HTMLElement).classList.add('cameraView');
     this.scanning = true;
-    this.qrScanner.show().then((status: QRScannerStatus) => {
-      console.log("after show called: ", status);
-      console.log("after show called: ", status.showing);
-      console.log("after show called: ", status.scanning);
-    })
+    setTimeout(() => {
+      this.qrScanner.show().then((status: QRScannerStatus) => {
+        console.log("after show called: ", status);
+      })
+    }, 1);
+
   }
 
 
   public saveBookAndOpenMedia(book: EBook) {
 
-    this.sqldb.insertBook({ bookId: book.bookId }).then(
-      () => {
-        console.log('book record saved successfully');
-      },
-      error => {
-        console.error('ERROR: while saving book: ', error);
+    this.sqldb.getEBooks().then(
+      savedBooks => {
+        let alreadySaved = false;
+        for (let savedBook of savedBooks) {
+          if (savedBook.bookId == book.bookId) {
+            alreadySaved = true;
+            break;
+          }
+        }
+        if (!alreadySaved) {
+          this.sqldb.insertBook({ bookId: book.bookId }).then(
+            () => {
+              console.log('book record saved successfully');
+              this.navCtrl.pop();
+            },
+            error => {
+              console.error('ERROR: while saving book: ', error);
+              this.navCtrl.pop();
+            }
+          )
+        }
+        else {
+          console.log('book already saved...');
+          this.navCtrl.pop();
+        }
       }
     )
 
     this.ebooksProvider.openMedia(book.bookUrl);
 
-    this.navCtrl.pop();
+
   }
 
 
   ionViewWillLeave() {
-    console.log("ionViewWillLeave: trigger cleanup of scanner");
     this.cleanUpScanner();
   }
 

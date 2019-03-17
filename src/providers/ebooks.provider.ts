@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { InAppBrowser } from '@ionic-native/in-app-browser';
 import { Observable } from 'rxjs';
 
+import { EBOOKS_URI } from '../app/app.constants';
 import { EBook } from '../model/ebook';
 import { Result } from '../model/result';
 import { DataProvider } from './data.provider';
@@ -28,8 +29,8 @@ export class EBooksProvider {
       return Observable.of(this.books);
     }
     else {
-      //const requestUrl = EBOOKS_URI;
-      const requestUrl = 'assets/mock/ebooks.json';
+      const requestUrl = EBOOKS_URI;
+      //const requestUrl = 'assets/mock/ebooks.json';
       console.log("fetching books from url: " + requestUrl);
       return this.data.getAll<Result<EBook>>(requestUrl)
         .map(data => {
@@ -78,7 +79,7 @@ export class EBooksProvider {
   public openMedia(mediaUrl: string) {
 
     // hardwareback option enables back button to be used for navigating back in browser history
-    this.iab.create(mediaUrl, "_blank", "location=yes,hardwareback=no");
+    this.iab.create(mediaUrl, "_blank", "location=no,hardwareback=no");
 
     // below code may be used in future
 

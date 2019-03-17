@@ -29,6 +29,7 @@ export class MyBooksPage {
   }
 
   ionViewWillEnter() {
+    console.log('mybooks ionViewWillEnter fired')
     this.noBooksMessage = false;
     this.loadBooks();
   }
@@ -56,7 +57,7 @@ export class MyBooksPage {
             if (this.myEBooks.length == 0) {
               this.noBooksMessage = true;
             }
-
+            console.log('my books load complete');
             loader.dismiss();
           },
           error => {
