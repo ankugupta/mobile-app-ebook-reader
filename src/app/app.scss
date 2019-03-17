@@ -18,9 +18,11 @@ button {
 }
 
 .content {
-    background-image: linear-gradient(#aeffdb, #72ddf6);
+    background: #ec4e64 url(../assets/img/bg.jpg) no-repeat bottom center;
+    background-size: cover;
+    color: #000;
 }
 
-.btn{
+.btn {
     margin: 0;
 }
