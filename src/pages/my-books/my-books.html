@@ -7,13 +7,11 @@
             </button>
         </ion-buttons>
     </ion-navbar>
-
+    <ion-searchbar #searchBar color="secondary" placeholder="Search with book name"
+        (ionInput)="filterBooksByTitle($event)"></ion-searchbar>
 </ion-header>
 
 <ion-content padding>
-    <ion-searchbar #searchBar color="secondary" placeholder="Search with book name"
-        (ionInput)="filterBooksByTitle($event)"></ion-searchbar>
-
     <div *ngIf="noBooksMessage">
         <p class="notBookAvailable">You don't have any books yet! Get one now!!!</p>
         <button block ion-button class="btn" (click)="goToQRScanPage()">Scan QR Code</button>
