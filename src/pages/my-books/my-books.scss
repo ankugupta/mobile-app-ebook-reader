@@ -7,13 +7,23 @@ page-my-books {
             box-shadow: none;
         }
     }
-    img {
-        box-shadow: 0px 4px 11px 0px #26A69A;
-        border-radius: 4px;
-    }
     .notBookAvailable {
         text-align: center;
         font-size: 40px;
         font-weight: 100;
+    }
+    .card {
+        margin: 0;
+        width: 100%;
+    }
+    .grid {
+        padding: 0;
+    }
+    .scroll-content {
+        padding: 11px !important;
+    }
+    .card-content {
+        padding: 10px 5px;
+        text-align: center;
     }
 }

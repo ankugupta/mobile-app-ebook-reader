@@ -1,5 +1,5 @@
 <ion-header>
-    <ion-navbar color="dark">
+    <ion-navbar color="primary">
         <ion-title>My Books</ion-title>
         <ion-buttons end>
             <button ion-button color="primary" title="QR Code Scan" (click)="goToQRScanPage()">
@@ -15,17 +15,16 @@
         <p class="notBookAvailable">You don't have any books yet! Get one now!!!</p>
         <button block ion-button class="btn" (click)="goToQRScanPage()">Scan QR Code</button>
     </div>
-
     <ion-grid>
         <ion-row>
             <ion-col col-6 *ngFor="let book of searchedBooks" tappable (click)="openMedia(book.bookUrl)">
                 <ion-card>
+                    <img [src]="book.imageUrl">
                     <ion-card-content>
-                        <img [src]="book.imageUrl" height="175px">
                         <p>{{book.title}}</p>
                     </ion-card-content>
                 </ion-card>
             </ion-col>
         </ion-row>
     </ion-grid>
-</ion-content>
+</ion-content>y
